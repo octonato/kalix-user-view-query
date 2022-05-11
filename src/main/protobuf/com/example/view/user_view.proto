@@ -1,0 +1,30 @@
+syntax = "proto3";
+package com.example.view;
+
+import "com/example/domain/user_domain.proto";
+import "kalix/annotations.proto";
+
+service UsersByName {
+  option (kalix.codegen) = {
+    view: {} 
+  };
+
+  rpc UpdateUsers(domain.UserState) returns (domain.UserState) { 
+    option (kalix.method).eventing.in = { 
+      value_entity: "users"
+    };
+    option (kalix.method).view.update = { 
+      table: "users"
+    };
+  }
+
+  rpc GetUsers(ByNameRequest) returns (stream domain.UserState) { 
+    option (kalix.method).view.query = { 
+      query: "SELECT * FROM users WHERE first_name = :name"
+    };
+  }
+}
+
+message ByNameRequest {
+  string name = 1;
+}
