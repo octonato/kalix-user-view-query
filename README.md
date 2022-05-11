@@ -41,17 +41,11 @@ sbt run
 With both the proxy and your application running, any defined endpoints should be available at `http://localhost:9000`. In addition to the defined gRPC interface, each method has a corresponding HTTP endpoint. Unless configured otherwise (see [Transcoding HTTP](https://docs.kalix.io/java/proto.html#_transcoding_http)), this endpoint accepts POST requests at the path `/[package].[entity name]/[method]`. For example, using `curl`:
 
 ```shell
-> curl -XPOST -H "Content-Type: application/json" localhost:9000/com.example.CounterService/GetCurrentCounter -d '{"counterId": "foo"}'
-The command handler for `GetCurrentCounter` is not implemented, yet
-```
+# create user 
+grpcurl -plaintext -d '{ "user_id" : "bob", "first_name" : "Bob", "last_name" : "Marley" }' localhost:9000 com.example.UserService/Create
 
-For example, using [`grpcurl`](https://github.com/fullstorydev/grpcurl):
-
-```shell
-> grpcurl -plaintext -d '{"counterId": "foo"}' localhost:9000 com.example.CounterService/GetCurrentCounter 
-ERROR:
-  Code: Unknown
-  Message: The command handler for `GetCurrentCounter` is not implemented, yet
+# search by first name 
+grpcurl -plaintext -d '{ "name": "Bob" }' localhost:9000 com.example.view.UsersByName/GetUsers   
 ```
 
 > Note: The failure is to be expected if you have not yet provided an implementation of `GetCurrentCounter` in
